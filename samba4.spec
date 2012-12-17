@@ -53,22 +53,19 @@ Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
 # Source0-md5:	93e9aad40893ba48d08e1b28e7efff72
 Source1:	smb.init
-Source2:	%{name}.pamd
+Source2:	samba.pamd
 Source3:	swat.inetd
-Source4:	%{name}.sysconfig
-Source5:	%{name}.logrotate
+Source4:	samba.sysconfig
+Source5:	samba.logrotate
 Source6:	smb.conf
 Source7:	winbind.init
 Source8:	winbind.sysconfig
-Source9:	%{name}-rfc3454.txt
 Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/samba-virusfilter-%{virusfilter_version}.tar.bz2
 # Source10-md5:	a3a30d5fbf309d356e8c5833db680c17
-Patch0:		%{name}-smbwrapper.patch
-Patch1:		%{name}-c++-nofail.patch
-Patch2:		%{name}-pthread.patch
-Patch3:		%{name}-nscd.patch
-Patch4:		%{name}-lprng-no-dot-printers.patch
-Patch5:		%{name}-passdb-smbpasswd.patch
+Patch1:		samba-c++-nofail.patch
+Patch3:		samba-nscd.patch
+Patch4:		samba-lprng-no-dot-printers.patch
+Patch5:		samba-passdb-smbpasswd.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -826,23 +823,9 @@ Samba Module for Python.
 
 %prep
 %setup -q -n samba-%{version}
-%patch0 -p1
 %patch1 -p1
-%patch2 -p1
 %patch3 -p1
 %patch4 -p1
-
-%{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
-
-# deprecated in gnutls 3.0
-%{__sed} -i -e "s/gnutls_transport_set_lowat(tls->session, 0);//"      source4/lib/tls/tls.c
-%{__sed} -i -e "s/gnutls_transport_set_lowat(tlss->tls_session, 0);//" source4/lib/tls/tls_tstream.c
-
-#cd examples/VFS
-#mv README{,.vfs}
-#cd ../..
-
-install %{SOURCE9} source4/heimdal/lib/wind/rfc3454.txt
 
 %build
 # use ld.bfd because gold doesn't understand linker script
@@ -891,12 +874,7 @@ cd source3
 %{__make} -j1 everything pam_smbpass bin/smbget bin/vfstest \
 	LD=ld
 
-cd ../examples
-%{__make} -C libsmbclient/smbwrapper \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \$(SMBINCLUDE)"
-
-cd VFS
+cd ../examples/VFS
 %{__autoheader}
 %{__autoconf}
 %configure \
@@ -934,11 +912,6 @@ install -p source3/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 install -p source3/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
 cp -a source3/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
-
-# smbwrapper
-install -p examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
-install -p examples/libsmbclient/smbwrapper/smbsh $RPM_BUILD_ROOT%{_bindir}
-cp -p examples/libsmbclient/smbwrapper/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # these are needed to build samba-pdbsql
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
@@ -1160,7 +1133,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
-%attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/rpcclient.1*
