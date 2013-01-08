@@ -1056,6 +1056,9 @@ fi
 %dir %{_libdir}/samba
 %dir %{_libdir}/samba/auth
 %attr(755,root,root) %{_libdir}/samba/auth/script.so
+%{_datadir}/samba/codepages/lowcase.dat
+%{_datadir}/samba/codepages/upcase.dat
+%{_datadir}/samba/codepages/valid.dat
 %{_mandir}/man1/ntlm_auth.1*
 %{_mandir}/man1/profiles.1*
 %{_mandir}/man1/smbcquotas.1*
@@ -1073,7 +1076,6 @@ fi
 %{_mandir}/man8/idmap_rid.8*
 %{_mandir}/man8/idmap_tdb.8*
 %{_mandir}/man8/idmap_tdb2.8*
-
 %if %{without system_libs}
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
@@ -1084,7 +1086,6 @@ fi
 %{_mandir}/man8/tdbdump.8*
 %{_mandir}/man8/tdbtool.8*
 %endif
-
 
 %files swat
 %defattr(644,root,root,755)
@@ -1107,7 +1108,7 @@ fi
 %lang(ja) %{_datadir}/samba/codepages/ja.msg
 %lang(nl) %{_datadir}/samba/codepages/nl.msg
 %lang(pl) %{_datadir}/samba/codepages/pl.msg
-%lang(ru) %{_datadir}/samba/codepages/ru.msg
+%lang(ru) %{_datadir}/samba/codepages/ru*
 %lang(tr) %{_datadir}/samba/codepages/tr.msg
 %{_mandir}/man8/swat.8*
 
