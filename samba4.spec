@@ -88,7 +88,9 @@ BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	python-devel
+BuildRequires:	python-dns
 BuildRequires:	python-modules
+BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
