@@ -1584,12 +1584,6 @@ fi
 %{py_sitedir}/samba/external/subunit/*.py[co]
 %dir %{py_sitedir}/samba/external/subunit/tests
 %{py_sitedir}/samba/external/subunit/tests/*.py[co]
-%dir %{py_sitedir}/samba/external/testtools
-%{py_sitedir}/samba/external/testtools/*.py[co]
-%dir %{py_sitedir}/samba/external/testtools/testresult
-%{py_sitedir}/samba/external/testtools/testresult/*.py[co]
-%dir %{py_sitedir}/samba/external/testtools/tests
-%{py_sitedir}/samba/external/testtools/tests/*.py[co]
 %dir %{py_sitedir}/samba/netcmd
 %{py_sitedir}/samba/netcmd/*.py[co]
 %dir %{py_sitedir}/samba/provision
