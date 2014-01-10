@@ -1,12 +1,10 @@
-# TODO:
-#	- unbundle ntdb (no external release as of 16.Oct.2013)
 #
 # Conditional build:
 %bcond_without	ads		# ActiveDirectory support
 %bcond_without	cups		# CUPS support
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
-%bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb)
+%bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
 %define		talloc_ver	2.0.7
@@ -22,13 +20,13 @@
 Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
-Version:	4.1.3
+Version:	4.1.4
 Release:	2.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	a5dbfe87f4cb3d9d91e15e5df99a59a1
+# Source0-md5:	c7871012ac40b8c74afff42bbd873bd7
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -51,7 +49,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_avahi:BuildRequires:	avahi-devel}
-#BuildRequires:	ceph-devel
+BuildRequires:	ceph-devel >= 0.73
 BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
@@ -84,13 +82,14 @@ BuildRequires:	python-dns
 BuildRequires:	python-modules
 BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
-BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
+BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-#BuildRequires:	ntdb-devel >= %{ntdb_ver}
+BuildRequires:	ntdb-devel >= %{ntdb_ver}
+BuildRequires:	python-ntdb >= %{ntdb_ver}
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
@@ -103,9 +102,9 @@ BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
-Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
+Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
@@ -152,8 +151,8 @@ Summary:	Samba AD client programs
 Summary(pl.UTF-8):	Klienci serwera Samba AD
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Requires:	heimdal-libs >= 1.5.3-1
+Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Suggests:	cifs-utils
 Obsoletes:	smbfs
 
@@ -174,7 +173,7 @@ Group:		Networking/Daemons
 Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
-#Requires:	ntdb >= %{ntdb_ver}
+Requires:	ntdb >= %{ntdb_ver}
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
@@ -231,8 +230,8 @@ Pliki nagłówkowe Samby.
 Summary:	PAM Samba Password Module
 Summary(pl.UTF-8):	Moduł PAM smbpass
 Group:		Base
-Obsoletes:	pam_smbpass
 Obsoletes:	pam-pam_smbpass < 1:4.0.8-3
+Obsoletes:	pam_smbpass
 
 %description -n pam-pam_smbpass3
 PAM module which can be used on conforming systems to keep the
@@ -261,13 +260,13 @@ Sambę oraz Wiresharka to analizy IDL i podobnych protokołów.
 Summary:	Samba Module for Python
 Summary(pl.UTF-8):	Moduł Samba dla Pythona
 Group:		Development/Languages/Python
-%pyrequires_eq	python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	python
 Requires:	python-dns
 Requires:	python-modules
 %if %{with system_libs}
 Requires:	python-ldb >= %{ldb_ver}
-#Requires:	python-ntdb >= %{ntdb_ver}
+Requires:	python-ntdb >= %{ntdb_ver}
 Requires:	python-talloc >= %{talloc_ver}
 Requires:	python-tevent >= %{tevent_ver}
 %endif
@@ -312,8 +311,8 @@ przez narzędzia testowe dla serwerów i klientów Samby.
 Summary:	SMB server
 Summary(pl.UTF-8):	Serwer SMB
 Group:		Networking/Daemons
-Requires:	samba3-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
 Requires:	logrotate >= 3.7-4
@@ -345,12 +344,12 @@ haseł w standardzie MS i zarządzania bazą WINS.
 Summary:	Samba client programs
 Summary(pl.UTF-8):	Klienci serwera Samba
 Group:		Applications/Networking
+Requires:	heimdal-libs
 Requires:	samba3-common = %{epoch}:%{version}-%{release}
 Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
-Requires:	heimdal-libs
-Obsoletes:	smbfs
-Obsoletes:	samba-client < 1:4.0.0-1
 Suggests:	cifs-utils
+Obsoletes:	samba-client < 1:4.0.0-1
+Obsoletes:	smbfs
 
 %description -n samba3-client
 Samba-client provides some SMB clients, which complement the build-in
@@ -407,7 +406,7 @@ to the syslog facility. The following operations are logged:
 
 %description -n samba3-vfs-audit -l pl.UTF-8
 Proste moduły (audit, extd_audit, full_audit) do monitorowania dostępu
-do plików na serwerze Samba do do sysloga. Monitorowane są następujące
+do plików na serwerze Samba do sysloga. Monitorowane są następujące
 operacje:
  - podłączenie do/odłączenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
@@ -528,7 +527,7 @@ informowania o zmianach w plikach dla klientów Windows.
 
 %package -n samba3-vfs-netatalk
 Summary:	VFS module for ease co-existence of Samba and netatalk
-Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów Samba i netatalk
+Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę usług Samba i netatalk
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
 Obsoletes:	samba-vfs-netatalk < 1:4.0.0-1
@@ -543,7 +542,7 @@ i netatalk przy udostępnianiu zasobów.
 
 %package -n samba3-vfs-recycle
 Summary:	VFS module to add recycle bin facility to a Samba share
-Summary(pl.UTF-8):	Moduł VFS dodający możliwość kosza do zasobu Samby
+Summary(pl.UTF-8):	Moduł VFS dodający funkcję kosza do zasobu Samby
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
 Obsoletes:	samba-vfs-recycle < 1:4.0.0-1
@@ -552,7 +551,7 @@ Obsoletes:	samba-vfs-recycle < 1:4.0.0-1
 VFS module to add recycle bin facility to a Samba share.
 
 %description -n samba3-vfs-recycle -l pl.UTF-8
-Moduł VFS dodający możliwość kosza do zasobu Samby.
+Moduł VFS dodający funkcję kosza do zasobu Samby.
 
 %package -n samba3-vfs-readahead
 Summary:	VFS module for pre-loading the kernel buffer cache
@@ -647,8 +646,8 @@ używanym w sieciach MS Windows.
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
-Requires:	samba3-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
+Requires:	samba3-client = %{epoch}:%{version}-%{release}
 Obsoletes:	cups-backend-smb < 1:4.0.8-3
 
 %description -n cups-backend-smb3
@@ -776,7 +775,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--disable-rpath-install \
 	--builtin-libraries=replace,ccan \
-	--bundled-libraries=NONE,subunit,iniparser,ntdb,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
+	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
 	--private-libraries=smbclient,smbsharemodes,wbclient \
 	--with-shared-modules=idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2,pdb_tdbsam,pdb_ldap,pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4,auth_unix,auth_wbc,auth_server,auth_netlogond,auth_script,auth_samba4 \
 	--with-acl-support \
@@ -1194,7 +1193,7 @@ fi
 %dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
-#%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
+%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
 %attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
@@ -1214,22 +1213,21 @@ fi
 %{_mandir}/man8/vfs_fileid.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
-# TODO
+%if %{without system_libs}
 %attr(755,root,root) %{_bindir}/ntdbbackup
 %attr(755,root,root) %{_bindir}/ntdbdump
 %attr(755,root,root) %{_bindir}/ntdbrestore
 %attr(755,root,root) %{_bindir}/ntdbtool
+%attr(755,root,root) %{_bindir}/tdbbackup
+%attr(755,root,root) %{_bindir}/tdbdump
+%attr(755,root,root) %{_bindir}/tdbtool
 %attr(755,root,root) %{_libdir}/samba/libntdb.so.*
+%attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
+%attr(755,root,root) %{_libdir}/samba/libtdb.so.*
 %{_mandir}/man8/ntdbbackup.8*
 %{_mandir}/man8/ntdbdump.8*
 %{_mandir}/man8/ntdbrestore.8*
 %{_mandir}/man8/ntdbtool.8*
-%if %{without system_libs}
-%attr(755,root,root) %{_bindir}/tdbbackup
-%attr(755,root,root) %{_bindir}/tdbdump
-%attr(755,root,root) %{_bindir}/tdbtool
-%attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
-%attr(755,root,root) %{_libdir}/samba/libtdb.so.*
 %{_mandir}/man8/tdbbackup.8*
 %{_mandir}/man8/tdbdump.8*
 %{_mandir}/man8/tdbtool.8*
@@ -1410,10 +1408,9 @@ fi
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
 %{_pkgconfigdir}/smbclient-raw.pc
-# TODO
-#%if %{without system_libs}
+%if %{without system_libs}
 %{_mandir}/man3/ntdb.3*
-#%endif
+%endif
 
 %files -n pam-pam_smbpass3
 %defattr(644,root,root,755)
@@ -1464,10 +1461,9 @@ fi
 %{py_sitedir}/samba/tests/dcerpc/*.py[co]
 %dir %{py_sitedir}/samba/web_server
 %{py_sitedir}/samba/web_server/*.py[co]
-# TODO
-%attr(755,root,root) %{py_sitedir}/ntdb.so
 %if %{without system_libs}
 %attr(755,root,root) %{py_sitedir}/ldb.so
+%attr(755,root,root) %{py_sitedir}/ntdb.so
 %attr(755,root,root) %{py_sitedir}/talloc.so
 %attr(755,root,root) %{py_sitedir}/tdb.so
 %attr(755,root,root) %{py_sitedir}/_tevent.so
@@ -1727,6 +1723,7 @@ fi
 %endif
 
 %files -n samba3-winbind
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
