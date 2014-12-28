@@ -56,7 +56,7 @@ BuildRequires:	dmapi-devel
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	glusterfs-devel
 BuildRequires:	gnutls-devel
 BuildRequires:	heimdal-devel >= 1.5.3-1
