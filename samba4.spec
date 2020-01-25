@@ -14,7 +14,6 @@
 %define		ntdb_ver	0.9
 %endif
 
-%include	/usr/lib/rpm/macros.perl
 
 %define		virusfilter_version 0.1.3
 Summary:	Active Directory server
